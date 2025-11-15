@@ -1,65 +1,135 @@
-import Image from "next/image";
+import { Button } from '@/components/ui/button';
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Utensils, TrendingUp, Search, Shield, Zap, Clock, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+import FeatureCard from '@/components/FeatureCard';
 
-export default function Home() {
+const HomePage = () => {
+
+  // useEffect(() => {
+  //   // Redirect to dashboard if already logged in
+  //   if (token) {
+  //     router.push('/dashboard');
+  //   }
+  // }, [token, router]);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      <section className="relative overflow-hidden bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900">
+        <div className="absolute inset-0 bg-grid-slate-900/[0.04] dark:bg-grid-slate-400/[0.05]" />
+        <div className="container relative mx-auto px-4 py-24 lg:py-32">
+          <div className="mx-auto max-w-4xl text-center">
+            <h1 className="mb-6 text-5xl font-bold tracking-tight text-slate-900 dark:text-white lg:text-7xl">
+              Track Your Calories
+              <span className="block bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                The Smart Way
+              </span>
+            </h1>
+            <p className="mb-8 text-xl text-slate-600 dark:text-slate-400 lg:text-2xl">
+              Get instant nutritional information for thousands of dishes. Make informed decisions about your meals.
+            </p>
+            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+              <Button asChild size="lg" className="text-lg">
+                <Link href="/register">
+                  Create Free Account
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="text-lg">
+                <Link href="/login">Sign In</Link>
+              </Button>
+            </div>
+          </div>
+
+          {/* Feature Preview Cards */}
+          <div className="mx-auto mt-20 grid max-w-5xl gap-8 md:grid-cols-3">
+            <Card className="border-2 transition-all hover:shadow-lg">
+              <CardHeader>
+                <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-950">
+                  <Search className="h-6 w-6 text-green-600 dark:text-green-400" />
+                </div>
+                <CardTitle>Instant Search</CardTitle>
+                <CardDescription>
+                  Search thousands of dishes and get calorie information in seconds
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="border-2 transition-all hover:shadow-lg">
+              <CardHeader>
+                <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-950">
+                  <TrendingUp className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                </div>
+                <CardTitle>Track Progress</CardTitle>
+                <CardDescription>
+                  Monitor your daily intake and view detailed statistics over time
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="border-2 transition-all hover:shadow-lg">
+              <CardHeader>
+                <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-950">
+                  <Clock className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                </div>
+                <CardTitle>Meal History</CardTitle>
+                <CardDescription>
+                  Access your complete meal history and repeat searches instantly
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+      </section>
+
+      {/* Features Section */}
+      <section className="bg-white py-24 dark:bg-slate-900">
+        <div className="container mx-auto px-4">
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="mb-4 text-4xl font-bold text-slate-900 dark:text-white">
+              Everything You Need
+            </h2>
+            <p className="mb-12 text-lg text-slate-600 dark:text-slate-400">
+              Simple, powerful tools to help you make better food choices
+            </p>
+          </div>
+
+          <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <FeatureCard
+              icon={<Shield className="h-8 w-8" />}
+              title="Accurate Data"
+              description="Powered by USDA FoodData Central for reliable nutritional information"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <FeatureCard
+              icon={<Utensils className="h-8 w-8" />}
+              title="Thousands of Foods"
+              description="Access a comprehensive database of dishes and ingredients"
+            />
+            <FeatureCard
+              icon={<TrendingUp className="h-8 w-8" />}
+              title="Smart Analytics"
+              description="View trends and insights about your eating habits"
+            />
+            <FeatureCard
+              icon={<Clock className="h-8 w-8" />}
+              title="Quick Logging"
+              description="Log meals in seconds with our intuitive interface"
+            />
+            <FeatureCard
+              icon={<Search className="h-8 w-8" />}
+              title="Smart Search"
+              description="Find exactly what you're looking for with intelligent search"
+            />
+            <FeatureCard
+              icon={<Zap className="h-8 w-8" />}
+              title="Lightning Fast"
+              description="Get results instantly without any delays"
+            />
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+    </>
   );
 }
+
+export default HomePage;
