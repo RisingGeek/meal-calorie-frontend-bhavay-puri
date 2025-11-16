@@ -1,7 +1,7 @@
 "use client";
 
 import { ChefHat, Target, Trash2 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,8 +16,8 @@ import {
 import CreateMealPlanDialog from './CreateMealPlanDialog';
 import { useMealPlanStore } from '@/stores/mealPlanStore';
 import MealDayCard from './MealDayCard';
-import { Separator } from './ui/separator';
-import { Button } from './ui/button';
+import { Separator } from '../ui/separator';
+import { Button } from '../ui/button';
 import EditMealPlanDialog from './EditMealPlanDialog';
 import { MealPlan } from '@/types/mealPlan.type';
 import { useEffect, useState } from 'react';

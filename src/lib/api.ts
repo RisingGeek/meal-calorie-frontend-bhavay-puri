@@ -22,7 +22,3 @@ export const getCalorieApi = async (mealData: z.infer<typeof ICalorieSchema>, to
     },
   });
 }
-
-export const setAuthCookieApi = async (token: string) => {
-  return await axios.post("/api/auth/set-cookie", { token })
-}

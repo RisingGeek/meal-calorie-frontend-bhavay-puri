@@ -1,5 +1,5 @@
-import CreateMealPlanDialog from '@/components/CreateMealPlanDialog';
-import MealPlanCards from '@/components/MealPlanCards';
+import CreateMealPlanDialog from '@/components/meal-plan/CreateMealPlanDialog';
+import MealPlanCards from '@/components/meal-plan/MealPlanCards';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {

@@ -1,9 +1,9 @@
 "use client";
 
-import { CardDescription, CardTitle } from './ui/card'
+import { CardDescription, CardTitle } from '../ui/card'
 import { Clock, Trash2 } from 'lucide-react'
 import { useMealStore } from '@/stores/mealStore'
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 
 const CalorieHistoryHeader = () => {
   const { history, setHistory } = useMealStore();

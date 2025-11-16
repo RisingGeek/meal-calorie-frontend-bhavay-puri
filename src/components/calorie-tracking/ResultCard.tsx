@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { CircleDot, Database, Flame, Soup, TextSearch, Utensils } from 'lucide-react'
 import { useMealStore } from '@/stores/mealStore'
 import NutritionalInfoItem from './NutritionalInfoItem';

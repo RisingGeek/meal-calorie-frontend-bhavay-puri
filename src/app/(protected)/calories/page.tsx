@@ -1,10 +1,10 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import MealForm from "@/components/MealForm";
-import ResultCard from "@/components/ResultCard";
+import MealForm from "@/components/calorie-tracking/MealForm";
+import ResultCard from "@/components/calorie-tracking/ResultCard";
 import { Search } from "lucide-react";
-import CalorieHistory from "@/components/CalorieHistory";
-import CalorieHistoryHeader from "@/components/CalorieHistoryHeader";
+import CalorieHistory from "@/components/calorie-tracking/CalorieHistory";
 import { Metadata } from "next";
+import CalorieHistoryHeader from "@/components/calorie-tracking/CalorieHistoryHeader";
 
 export const metadata: Metadata = {
   title: 'Track Calories - Find Nutritional Information',
