@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
-import { CircleDot, Database, Flame, Soup, Utensils } from 'lucide-react'
+import { CircleDot, Database, Flame, Soup, TextSearch, Utensils } from 'lucide-react'
 import { useMealStore } from '@/stores/mealStore'
 import NutritionalInfoItem from './NutritionalInfoItem';
 
@@ -30,6 +30,14 @@ const ResultCard = () => {
         </div>
       </CardHeader>
       <CardContent>
+        {!nutritionalInfo && (
+          <div className="text-center py-8">
+            <TextSearch className="w-12 h-12 mx-auto text-slate-300 dark:text-slate-700 mb-3" />
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Start searching to view nutritional information
+            </p>
+          </div>
+        )}
         {nutritionalInfo && (
           <>
             <div className="grid grid-cols-3 gap-4">

@@ -1,109 +1,241 @@
-"use client";
+'use client';
 
-import React, { useState } from 'react'
-import { Alert, AlertDescription } from './ui/alert'
-import { AlertCircle, Loader2, Search } from 'lucide-react'
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from './ui/form';
-import { Input } from './ui/input';
-import { Button } from './ui/button';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { ICalorieSchema } from '@/types/calorie.type';
-import z from 'zod';
-import { getCalorieApi } from '@/lib/api';
-import { useAuthStore } from '@/stores/authStore';
+import { useState } from 'react';
 import { useMealStore } from '@/stores/mealStore';
 
-const MealForm = () => {
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
-  const { history, setNutritionalInfo, setHistory } = useMealStore((store) => store)
-  const [error, setError] = useState('');
-  // const addMeal = useAuthStore(store => store.addMeal);
-  const authToken = useAuthStore(store => store.token);
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Loader2, AlertCircle, Search, Check, ChevronDown, Clock, Sparkles } from 'lucide-react';
+import { useAuthStore } from '@/stores/authStore';
+import { cn } from '@/lib/utils';
+import { useFoodAutocomplete } from '@/hooks/useFoodAutocomplete';
+import { getCalorieApi } from '@/lib/api';
 
-  const form = useForm<z.infer<typeof ICalorieSchema>>({
-    resolver: zodResolver(ICalorieSchema),
+const calorieSchema = z.object({
+  dish_name: z.string().min(2, 'Dish name must be at least 2 characters'),
+  servings: z.coerce.number().min(1, 'Must be at least 1 serving').max(20, 'Maximum 20 servings'),
+});
+
+type CalorieFormValues = z.infer<typeof calorieSchema>;
+
+interface CalorieResult {
+  dish_name: string;
+  servings: number;
+  calories_per_serving: number;
+  total_calories: number;
+  source: string;
+}
+
+interface MealFormProps {
+  onResult: (result: CalorieResult) => void;
+}
+
+export default function MealForm() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const { token } = useAuthStore();
+  const { setNutritionalInfo, setHistory, history } = useMealStore();
+  
+  // Use the autocomplete hook
+  const { suggestions, isLoading: isFetchingSuggestions, hasHistory } = useFoodAutocomplete(searchQuery);
+
+  const form = useForm<CalorieFormValues>({
+    resolver: zodResolver(calorieSchema),
     defaultValues: {
       dish_name: '',
       servings: 1,
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof ICalorieSchema>) => {
+  const historyDishes = Array.from(
+    new Set(history.map((meal) => meal.dish_name.toLowerCase()))
+  );
+
+  const onSubmit = async (values: CalorieFormValues) => {
     setError('');
     setLoading(true);
-    setResult(null);
 
     try {
-      const response = await getCalorieApi(values, authToken);
+      const validDishName = values.dish_name.replace(/[^a-z0-9\s\-,']/gi, "");
+
+      const response = await getCalorieApi({dish_name: validDishName, servings: values.servings}, token);
+
       setNutritionalInfo(response.data);
-      setHistory([response.data, ...history]);
-      // setResult(nutritionalData);
-      // addMeal(data);
+      setHistory([response.data, ...history])
       form.reset();
+      setSearchQuery('');
     } catch (err: any) {
       setError(err.response.data.error || 'Failed to fetch calorie data. Please try again.');
     } finally {
       setLoading(false);
     }
   };
-  return (
-    <>
-      {error && (
-        <Alert variant="destructive" className="mb-4">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="dish_name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Dish Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., chicken biryani, pizza, pasta" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="servings"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Number of Servings</FormLabel>
-                <FormControl>
-                  <Input type="number" min={1} max={20} {...field} onChange={(e) => field.onChange(e.target.valueAsNumber)} />
-                </FormControl>
-                <FormDescription>
-                  Between 1 and 20 servings
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button type="submit" disabled={loading} className="w-full cursor-pointer" size="lg">
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Searching...
-              </>
-            ) : (
-              <>
-                <Search className="mr-2 h-4 w-4" />
-                Get Calorie Info
-              </>
-            )}
-          </Button>
-        </form>
-      </Form>
-    </>
-  )
-}
 
-export default MealForm
+  const handleSelectDish = (dish: string) => {
+    form.setValue('dish_name', dish);
+    setSearchQuery(dish);
+    setOpen(false);
+  };
+
+  // Separate history and API suggestions
+  const historySuggestions = suggestions.filter((s) => historyDishes.includes(s));
+  const apiSuggestions = suggestions.filter((s) => !historyDishes.includes(s));
+
+  return (
+ <>
+        {error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="dish_name"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Dish Name</FormLabel>
+                  <Command shouldFilter={true} filter={(value, search) => {
+                        // Custom filter: check if value includes search term
+                        if (value.toLowerCase().includes(search.toLowerCase())) return 1;
+                        return 0;
+                      }}>
+                  <Popover open={open} onOpenChange={setOpen}>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={open}
+                          className={cn(
+                            'w-full justify-between',
+                            !field.value && 'text-muted-foreground'
+                          )}
+                          type="button"
+                        >
+                          <span className="truncate">
+                            {field.value || 'Search for a dish...'}
+                          </span>
+                          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                        
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0" align="start">
+                      <CommandInput
+                          placeholder="Type to search..."
+                          value={searchQuery}
+                          onValueChange={(value) => {
+                            setSearchQuery(value);
+                            form.setValue('dish_name', value);
+                          }}
+                        />
+                        
+                        <CommandList>
+                          {isFetchingSuggestions ? (
+                            <div className="flex items-center justify-center py-6">
+                              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                              <span className="ml-2 text-sm text-muted-foreground">
+                                Searching...
+                              </span>
+                            </div>
+                          ) : searchQuery.length < 2 ? (
+                            <CommandEmpty>
+                              Type at least 2 characters to search
+                            </CommandEmpty>
+                          ) : suggestions.length === 0 ? (
+                            <CommandEmpty>
+                              No dishes found. Try a different search term.
+                            </CommandEmpty>
+                          ) : (
+                            <>
+                              {historySuggestions.length > 0 && (
+                                <CommandGroup heading="Recent Searches">
+                                  {historySuggestions.map((dish) => (
+                                    <CommandItem
+                                      key={`history-${dish}`}
+                                      value={dish}
+                                      onSelect={() => handleSelectDish(dish)}
+                                      className="cursor-pointer"
+                                    >
+                                      <Clock className="mr-2 h-4 w-4 text-blue-500" />
+                                      <span className="capitalize">{dish}</span>
+                                      {field.value === dish && (
+                                        <Check className="ml-auto h-4 w-4 text-primary" />
+                                      )}
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              )}
+                              {apiSuggestions.length > 0 && (
+                                <CommandGroup heading="USDA Food Database">
+                                  {apiSuggestions.map((dish) => (
+                                    <CommandItem
+                                      key={`api-${dish}`}
+                                      value={dish}
+                                      onSelect={() => handleSelectDish(dish)}
+                                      className="cursor-pointer"
+                                    >
+                                      <Sparkles className="mr-2 h-4 w-4 text-green-500" />
+                                      <span className="capitalize">{dish}</span>
+                                      {field.value === dish && (
+                                        <Check className="ml-auto h-4 w-4 text-primary" />
+                                      )}
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              )}
+                            </>
+                          )}
+                        </CommandList>
+                    </PopoverContent>
+                  </Popover>
+                  </Command>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="servings"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Number of Servings</FormLabel>
+                  <FormControl>
+                    <Input type="number" min="1" max="20" {...field} />
+                  </FormControl>
+                  <FormDescription>Between 1 and 20 servings</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button type="submit" disabled={loading} className="w-full cursor-pointer" size="lg">
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                </>
+              ) : (
+                <>
+                  <Search className="mr-2 h-4 w-4" />
+                  Get Calorie Info
+                </>
+              )}
+            </Button>
+          </form>
+        </Form>
+    </>
+  );
+}

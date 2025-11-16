@@ -27,7 +27,6 @@ const Navbar = () => {
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/calories', label: 'Calorie Tracker', icon: Search },
     { href: '/meal-plans', label: 'Meal Plans', icon: Calendar },
-    { href: '/history', label: 'History', icon: Clock },
   ];
 
   return (

@@ -12,6 +12,7 @@ export const useMealStore = create<IMealState>()(
     }),
     {
       name: 'meal-storage',
+      partialize: (state) => ({ history: state.history })
     }
   )
 );

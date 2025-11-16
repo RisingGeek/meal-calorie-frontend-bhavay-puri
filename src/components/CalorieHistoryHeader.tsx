@@ -14,11 +14,6 @@ const CalorieHistoryHeader = () => {
           <Clock />
           Recent Searches
         </CardTitle>
-        {history.length > 0 && (
-          <Link href="/history">
-            View All
-          </Link>
-        )}
       </div>
       <CardDescription>
         Your last {history.length} meal searches

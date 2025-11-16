@@ -30,19 +30,19 @@ function CaloriePage() {
             </CardContent>
           </Card>
           {/* History Sidebar */}
-            <Card className="h-full">
-              <CardHeader>
-                <CalorieHistoryHeader />
-              </CardHeader>
-              <CardContent>
-                <CalorieHistory />
-              </CardContent>
-            </Card>
+          <Card className="h-full">
+            <CardHeader>
+              <CalorieHistoryHeader />
+            </CardHeader>
+            <CardContent>
+              <CalorieHistory />
+            </CardContent>
+          </Card>
         </div>
 
         {/* Result Card */}
-         <div className="flex-1 order-2">
-        <ResultCard />
+        <div className="flex-1 order-2">
+          <ResultCard />
         </div>
       </div>
     </div>
