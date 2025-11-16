@@ -1,12 +1,12 @@
 "use client";
 
 import { CardDescription, CardTitle } from './ui/card'
-import { Clock } from 'lucide-react'
+import { Clock, Trash2 } from 'lucide-react'
 import { useMealStore } from '@/stores/mealStore'
-import Link from 'next/link';
+import { Button } from './ui/button';
 
 const CalorieHistoryHeader = () => {
-  const { history } = useMealStore();
+  const { history, setHistory } = useMealStore();
   return (
     <>
       <div className="flex items-center justify-between">
@@ -14,10 +14,19 @@ const CalorieHistoryHeader = () => {
           <Clock />
           Recent Searches
         </CardTitle>
+        <Button
+          variant="ghost"
+          size="lg"
+          onClick={() => setHistory([])}
+        >
+          <Trash2 className="text-destructive" />
+        </Button>
       </div>
-      <CardDescription>
-        Your last {history.length} meal searches
-      </CardDescription>
+      {history.length > 0 && (
+        <CardDescription>
+          Your last {history.length} meal searches
+        </CardDescription>
+      )}
     </>
   )
 }

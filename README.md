@@ -1,36 +1,140 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CalScope - Smart Calorie Tracker & Meal Planner
 
-## Getting Started
+> A modern, production-ready web application for tracking calories and planning meals with real-time nutritional data.
 
-First, run the development server:
+## ✨ Features
 
+### 🔐 **Authentication & Authorization**
+- User registration and login
+- Secure JWT-based authentication
+- Protected routes
+
+### 🔍 **Smart Calorie Search**
+- Real-time autocomplete powered by USDA FoodData Central
+- Meal history log to display past calorie searches
+- Debounced API calls for optimal performance
+- Support for custom serving sizes (1-20 servings)
+- Nutritional info contains dish name, serving size, toal calories, calories per serving and data source
+
+### 📊 **Dashboard**
+- Daily calorie tracking with progress visualization
+- Weekly average calculations
+- Total searches statistics
+- Real-time goal tracking with progress bars
+**(Note: Dashboard includes only dummy components due to time constraint)**
+
+### 🍽️ **Meal Planning**
+- Create multiple meal plans
+- Weekly schedule (7 days)
+**(Note: Adding a meal in plans is omitted because of time constraint)**
+
+### 🎨 **UI/UX**
+- Dark/Light mode toggle
+- Fully responsive design (mobile-first)
+- Modern gradient backgrounds
+- Loading states and error handling
+
+## 🛠️ Tech Stack
+
+### **Frontend**
+- **Framework:** Next.js (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS + shadcn/ui
+- **State Management:** Zustand (with persist middleware)
+- **Form Handling:** React Hook Form
+- **Validation:** Zod
+- **Icons:** Lucide React
+
+### **Backend Integration**
+- RESTful API communication
+- JWT token management
+
+### **Development Tools**
+- ESLint + Prettier
+- Docker + Docker Compose
+- npm package manager
+
+### **External APIs**
+- USDA FoodData Central API (food database)
+- Backend API (calorie calculation)
+
+## 📸 Screenshots
+
+## 🚀 Setup Instructions
+
+### **Prerequisites**
+- Node.js 20+ 
+- npm
+- Git
+
+### **1. Install Dependencies**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm ci
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### **2. Configure Environment Variables**
+```bash
+cp .env.example .env
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Add your USDA API key in .env file
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Get USDA API Key:** [https://fdc.nal.usda.gov/api-key-signup.html](https://fdc.nal.usda.gov/api-key-signup.html) (Free)
 
-## Learn More
+### **3. Run Development Server**
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Open [http://localhost:3000](http://localhost:3000)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### **5. Build for Production**
+```bash
+npm run build
+npm start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🐳 Docker Setup
+```bash
+docker-compose up --build
+```
 
-## Deploy on Vercel
+Access at [http://localhost:3000](http://localhost:3000)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### **Stop Docker**
+```bash
+docker-compose down
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🌍 Environment Variables
+
+| Variable | Description | Required | Default |
+|----------|-------------|----------|---------|
+| `NEXT_PUBLIC_API_BASE_URL` | Backend API endpoint | Yes | `http://localhost:8000` |
+| `NEXT_PUBLIC_USDA_API_KEY` | USDA FoodData Central API key | Yes | `DEMO_KEY` |
+
+## 🏗️ Design Decisions & Trade-Offs
+
+### **Zustand Stores**
+- `authStore`: JWT token (persisted to localStorage)
+- `mealStore`: Search history (persisted to localStorage)
+- `mealPlanStore`: Weekly meal plans (persisted)
+
+### **Authentication Flow**
+**Token Storage:** localStorage (via Zustand persist)
+- ✅ Survives page refresh
+- ✅ No additional setup needed
+- ❌ Vulnerable to XSS (mitigated by Content Security Policy)
+
+**Alternative considered:** HTTP-only cookies
+- ✅ More secure (not accessible to JavaScript)
+- ❌ Requires server-side middleware
+- ❌ More complex setup
+
+**Decision:** localStorage for simplicity in frontend-only app. For production, consider migrating to HTTP-only cookies with middleware.
+
+**Debouncing:**
+- Reduces API calls from ~10/sec to ~1 every 300ms
+- Better UX (waits for user to stop typing)
+- Respects API rate limits
+

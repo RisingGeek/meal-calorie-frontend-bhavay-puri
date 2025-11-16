@@ -9,7 +9,6 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -18,25 +17,9 @@ import { useAuthStore } from '@/stores/authStore';
 import { cn } from '@/lib/utils';
 import { useFoodAutocomplete } from '@/hooks/useFoodAutocomplete';
 import { getCalorieApi } from '@/lib/api';
+import { ICalorieSchema } from '@/types/calorie.type';
 
-const calorieSchema = z.object({
-  dish_name: z.string().min(2, 'Dish name must be at least 2 characters'),
-  servings: z.coerce.number().min(1, 'Must be at least 1 serving').max(20, 'Maximum 20 servings'),
-});
-
-type CalorieFormValues = z.infer<typeof calorieSchema>;
-
-interface CalorieResult {
-  dish_name: string;
-  servings: number;
-  calories_per_serving: number;
-  total_calories: number;
-  source: string;
-}
-
-interface MealFormProps {
-  onResult: (result: CalorieResult) => void;
-}
+type CalorieFormValues = z.infer<typeof ICalorieSchema>;
 
 export default function MealForm() {
   const [loading, setLoading] = useState(false);
@@ -45,12 +28,12 @@ export default function MealForm() {
   const [searchQuery, setSearchQuery] = useState('');
   const { token } = useAuthStore();
   const { setNutritionalInfo, setHistory, history } = useMealStore();
-  
+
   // Use the autocomplete hook
-  const { suggestions, isLoading: isFetchingSuggestions, hasHistory } = useFoodAutocomplete(searchQuery);
+  const { suggestions, isLoading: isFetchingSuggestions } = useFoodAutocomplete(searchQuery);
 
   const form = useForm<CalorieFormValues>({
-    resolver: zodResolver(calorieSchema),
+    resolver: zodResolver(ICalorieSchema),
     defaultValues: {
       dish_name: '',
       servings: 1,
@@ -68,7 +51,11 @@ export default function MealForm() {
     try {
       const validDishName = values.dish_name.replace(/[^a-z0-9\s\-,']/gi, "");
 
-      const response = await getCalorieApi({dish_name: validDishName, servings: values.servings}, token);
+      if (!token) {
+        return;
+      }
+
+      const response = await getCalorieApi({ dish_name: validDishName, servings: values.servings }, token);
 
       setNutritionalInfo(response.data);
       setHistory([response.data, ...history])
@@ -92,26 +79,26 @@ export default function MealForm() {
   const apiSuggestions = suggestions.filter((s) => !historyDishes.includes(s));
 
   return (
- <>
-        {error && (
-          <Alert variant="destructive" className="mb-4">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="dish_name"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Dish Name</FormLabel>
-                  <Command shouldFilter={true} filter={(value, search) => {
-                        // Custom filter: check if value includes search term
-                        if (value.toLowerCase().includes(search.toLowerCase())) return 1;
-                        return 0;
-                      }}>
+    <>
+      {error && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="dish_name"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Dish Name</FormLabel>
+                <Command shouldFilter={true} filter={(value, search) => {
+                  // Custom filter: check if value includes search term
+                  if (value.toLowerCase().includes(search.toLowerCase())) return 1;
+                  return 0;
+                }}>
                   <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger asChild>
                       <FormControl>
@@ -130,112 +117,115 @@ export default function MealForm() {
                           </span>
                           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
-                        
+
                       </FormControl>
                     </PopoverTrigger>
                     <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
                       <CommandInput
-                          placeholder="Type to search..."
-                          value={searchQuery}
-                          onValueChange={(value) => {
-                            setSearchQuery(value);
-                            form.setValue('dish_name', value);
-                          }}
-                        />
-                        
-                        <CommandList>
-                          {isFetchingSuggestions ? (
-                            <div className="flex items-center justify-center py-6">
-                              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                              <span className="ml-2 text-sm text-muted-foreground">
-                                Searching...
-                              </span>
-                            </div>
-                          ) : searchQuery.length < 2 ? (
-                            <CommandEmpty>
-                              Type at least 2 characters to search
-                            </CommandEmpty>
-                          ) : suggestions.length === 0 ? (
-                            <CommandEmpty className="p-2">
-                              No dishes found. Try a different search term.
-                            </CommandEmpty>
-                          ) : (
-                            <>
-                              {historySuggestions.length > 0 && (
-                                <CommandGroup heading="Recent Searches">
-                                  {historySuggestions.map((dish) => (
-                                    <CommandItem
-                                      key={`history-${dish}`}
-                                      value={dish}
-                                      onSelect={() => handleSelectDish(dish)}
-                                      className="cursor-pointer"
-                                    >
-                                      <Clock className="mr-2 h-4 w-4 text-blue-500" />
-                                      <span className="capitalize">{dish}</span>
-                                      {field.value === dish && (
-                                        <Check className="ml-auto h-4 w-4 text-primary" />
-                                      )}
-                                    </CommandItem>
-                                  ))}
-                                </CommandGroup>
-                              )}
-                              {apiSuggestions.length > 0 && (
-                                <CommandGroup heading="USDA Food Database">
-                                  {apiSuggestions.map((dish) => (
-                                    <CommandItem
-                                      key={`api-${dish}`}
-                                      value={dish}
-                                      onSelect={() => handleSelectDish(dish)}
-                                      className="cursor-pointer"
-                                    >
-                                      <Sparkles className="mr-2 h-4 w-4 text-green-500" />
-                                      <span className="capitalize">{dish}</span>
-                                      {field.value === dish && (
-                                        <Check className="ml-auto h-4 w-4 text-primary" />
-                                      )}
-                                    </CommandItem>
-                                  ))}
-                                </CommandGroup>
-                              )}
-                            </>
-                          )}
-                        </CommandList>
+                        placeholder="Type to search..."
+                        value={searchQuery}
+                        onValueChange={(value) => {
+                          setSearchQuery(value);
+                          form.setValue('dish_name', value);
+                        }}
+                      />
+
+                      <CommandList>
+                        {isFetchingSuggestions ? (
+                          <div className="flex items-center justify-center py-6">
+                            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                            <span className="ml-2 text-sm text-muted-foreground">
+                              Searching...
+                            </span>
+                          </div>
+                        ) : searchQuery.length < 2 ? (
+                          <CommandEmpty>
+                            Type at least 2 characters to search
+                          </CommandEmpty>
+                        ) : suggestions.length === 0 ? (
+                          <CommandEmpty className="p-2">
+                            No dishes found. Try a different search term.
+                          </CommandEmpty>
+                        ) : (
+                          <>
+                            {historySuggestions.length > 0 && (
+                              <CommandGroup heading="Recent Searches">
+                                {historySuggestions.map((dish) => (
+                                  <CommandItem
+                                    key={`history-${dish}`}
+                                    value={dish}
+                                    onSelect={() => handleSelectDish(dish)}
+                                    className="cursor-pointer"
+                                  >
+                                    <Clock className="mr-2 h-4 w-4 text-blue-500" />
+                                    <span className="capitalize">{dish}</span>
+                                    {field.value === dish && (
+                                      <Check className="ml-auto h-4 w-4 text-primary" />
+                                    )}
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            )}
+                            {apiSuggestions.length > 0 && (
+                              <CommandGroup heading="USDA Food Database">
+                                {apiSuggestions.map((dish) => (
+                                  <CommandItem
+                                    key={`api-${dish}`}
+                                    value={dish}
+                                    onSelect={() => handleSelectDish(dish)}
+                                    className="cursor-pointer"
+                                  >
+                                    <Sparkles className="mr-2 h-4 w-4 text-green-500" />
+                                    <span className="capitalize">{dish}</span>
+                                    {field.value === dish && (
+                                      <Check className="ml-auto h-4 w-4 text-primary" />
+                                    )}
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            )}
+                          </>
+                        )}
+                      </CommandList>
                     </PopoverContent>
                   </Popover>
-                  </Command>
-                </FormItem>
-              )}
-            />
+                </Command>
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="servings"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Number of Servings</FormLabel>
-                  <FormControl>
-                    <Input type="number" min="1" max="20" {...field} />
-                  </FormControl>
-                  <FormDescription>Between 1 and 20 servings</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <FormField
+            control={form.control}
+            name="servings"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Number of Servings</FormLabel>
+                <FormControl>
+                  <Input type="number" min={1}
+                    max={20}
+                    value={field.value ?? ""}
+                    onChange={(e) => field.onChange(e.target.valueAsNumber)} />
+                </FormControl>
+                <FormDescription>Between 1 and 20 servings</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <Button type="submit" disabled={loading} className="w-full cursor-pointer" size="lg">
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                </>
-              ) : (
-                <>
-                  <Search className="mr-2 h-4 w-4" />
-                  Get Calorie Info
-                </>
-              )}
-            </Button>
-          </form>
-        </Form>
+          <Button type="submit" disabled={loading} className="w-full cursor-pointer" size="lg">
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              </>
+            ) : (
+              <>
+                <Search className="mr-2 h-4 w-4" />
+                Get Calorie Info
+              </>
+            )}
+          </Button>
+        </form>
+      </Form>
     </>
   );
 }

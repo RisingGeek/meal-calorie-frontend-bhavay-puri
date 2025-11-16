@@ -42,13 +42,13 @@ const ResultCard = () => {
           <>
             <div className="grid grid-cols-3 gap-4">
               <NutritionalInfoItem label="Servings" value={nutritionalInfo.servings}>
-                <Utensils size={60} />
+                <Utensils size={60} color='skyblue' />
               </NutritionalInfoItem>
               <NutritionalInfoItem label="Calories Per Serving" value={nutritionalInfo.calories_per_serving}>
                 <CircleDot size={60} />
               </NutritionalInfoItem>
               <NutritionalInfoItem label="Total Calories" value={nutritionalInfo.total_calories}>
-                <Flame size={60} />
+                <Flame size={60} color='orange' />
               </NutritionalInfoItem>
             </div>
             <div className="flex items-center gap-4 mt-4 border-2 p-4">
