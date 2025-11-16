@@ -59,6 +59,12 @@
 - Backend API (calorie calculation)
 
 ## 📸 Screenshots
+![alt text](./screenshots/home-page.png)
+![alt text](./screenshots/signup-page.png)
+![alt text](./screenshots/login-page.png)
+![alt text](./screenshots/calorie-tracker.png)
+![alt text](./screenshots/dashboard.png)
+![alt text](./screenshots/meal-plans.png)
 
 ## 🚀 Setup Instructions
 
