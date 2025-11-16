@@ -1,63 +1,28 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
 import {
   TrendingUp,
-  TrendingDown,
-  Calendar,
   Flame,
   Apple,
-  Clock,
   Search,
   Activity,
   Target,
 } from 'lucide-react';
-import { useAuthStore } from '@/stores/authStore';
-import { useMealStore } from '@/stores/mealStore';
 import Link from 'next/link';
 import { Metadata } from 'next';
 
-// export const metadata: Metadata = {
-//   title: 'Dashboard - Your Calorie Tracking Overview',
-//   description: 'View your calorie tracking statistics, daily progress, and nutrition insights on your CalScope dashboard. Track your health goals in one place.',
-// };
+export const metadata: Metadata = {
+  title: 'Dashboard - Your Calorie Tracking Overview',
+  description: 'View your calorie tracking statistics, daily progress, and nutrition insights on your CalScope dashboard. Track your health goals in one place.',
+};
 
 export default function DashboardPage() {
-  const router = useRouter();
-  const { token, user } = useAuthStore();
-  console.log("token", token)
-  const { history } = useMealStore();
-
-  useEffect(() => {
-    if (!token) {
-      router.push('/login');
-    }
-  }, [token, router]);
-
-  if (!token) return null;
-
   // Calculate statistics
-  const today = new Date().toDateString();
-  const todaysMeals = history.filter(
-    (meal) => meal.timestamp && new Date(meal.timestamp).toDateString() === today
-  );
-  const todaysCalories = todaysMeals.reduce((sum, meal) => sum + meal.total_calories, 0);
-  const weekMeals = history.filter((meal) => {
-    if (!meal.timestamp) return false;
-    const mealDate = new Date(meal.timestamp);
-    const weekAgo = new Date();
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    return mealDate >= weekAgo;
-  });
-  const weeklyAverage = weekMeals.length > 0
-    ? Math.round(weekMeals.reduce((sum, meal) => sum + meal.total_calories, 0) / 7)
-    : 0;
+  const todaysMeals = [];
+  const todaysCalories = 0;
+  const weeklyAverage = 0
 
   const dailyGoal = 2000; // You can make this configurable
   const goalProgress = Math.min((todaysCalories / dailyGoal) * 100, 100);
@@ -68,10 +33,10 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="mb-2 text-4xl font-bold text-slate-900 dark:text-white">
-            Welcome back, {user?.first_name}! 👋
+            Welcome back! 👋
           </h1>
           <p className="text-lg text-slate-600 dark:text-slate-400">
-            Here's your nutrition overview
+            Here&apos;s your nutrition overview
           </p>
         </div>
 
@@ -100,7 +65,7 @@ export default function DashboardPage() {
           {/* Today's Calories */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Today's Calories</CardTitle>
+              <CardTitle className="text-sm font-medium">Today&apos;s Calories</CardTitle>
               <Flame className="h-4 w-4 text-orange-600 dark:text-orange-400" />
             </CardHeader>
             <CardContent>
@@ -147,7 +112,7 @@ export default function DashboardPage() {
               <Activity className="h-4 w-4 text-purple-600 dark:text-purple-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{history.length}</div>
+              <div className="text-3xl font-bold">0</div>
               <p className="text-xs text-muted-foreground">
                 meals searched
               </p>
@@ -161,7 +126,7 @@ export default function DashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Target className="h-5 w-5" />
-                Today's Progress
+                Today&apos;s Progress
               </CardTitle>
               <CardDescription>
                 Track your daily calorie intake goal
