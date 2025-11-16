@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 import { useFoodAutocomplete } from '@/hooks/useFoodAutocomplete';
 import { getCalorieApi } from '@/lib/api';
 import { ICalorieSchema } from '@/types/calorie.type';
+import { toast } from 'sonner';
 
 type CalorieFormValues = z.infer<typeof ICalorieSchema>;
 
@@ -57,6 +58,7 @@ export default function MealForm() {
 
       const response = await getCalorieApi({ dish_name: validDishName, servings: values.servings }, token);
 
+      toast.success('Calorie data fetched successfully!');
       setNutritionalInfo(response.data);
       setHistory([response.data, ...history])
       form.reset();
@@ -201,12 +203,12 @@ export default function MealForm() {
               <FormItem>
                 <FormLabel>Number of Servings</FormLabel>
                 <FormControl>
-                  <Input type="number" min={1}
-                    max={20}
+                  <Input
+                    type="number"
+                    min={1}
                     value={field.value ?? ""}
-                    onChange={(e) => field.onChange(e.target.valueAsNumber)} />
+                    onChange={(e) => field.onChange(e.target.value ? e.target.valueAsNumber : "")} />
                 </FormControl>
-                <FormDescription>Between 1 and 20 servings</FormDescription>
                 <FormMessage />
               </FormItem>
             )}

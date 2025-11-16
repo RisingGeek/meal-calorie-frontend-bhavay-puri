@@ -13,12 +13,15 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { registerUserApi } from "@/lib/api";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/stores/authStore";
+import { toast } from "sonner";
 
 function RegisterForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
-
+  const router = useRouter();
+  const { setAuth } = useAuthStore();
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -36,8 +39,9 @@ function RegisterForm() {
 
     try {
       const response = await registerUserApi(values);
-      setSuccess(true);
-      form.reset();
+      setAuth(response.data.token);
+      toast.success('Registration successful! Welcome aboard.');
+      router.replace("/dashboard");
     } catch (err: any) {
       console.log("error", err)
       setError(err.response.data.error || 'Registration failed. Please try again.');
@@ -60,17 +64,8 @@ function RegisterForm() {
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-          {success && (
-            <Alert className="mb-4 border-green-500 bg-green-50 dark:bg-green-950">
-              <CheckCircle2 className="h-4 w-4 text-green-600" />
-              <AlertTitle className="text-green-800 dark:text-green-200">Success!</AlertTitle>
-              <AlertDescription className="text-green-700 dark:text-green-300">
-                Account created successfully. Please switch to login tab to continue.
-              </AlertDescription>
-            </Alert>
-          )}
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
@@ -81,7 +76,9 @@ function RegisterForm() {
                       <FormControl>
                         <Input placeholder="Enter your first name" {...field} />
                       </FormControl>
-                      <FormMessage />
+                      <div className="h-5">
+                        <FormMessage />
+                      </div>
                     </FormItem>
                   )}
                 />
@@ -94,7 +91,9 @@ function RegisterForm() {
                       <FormControl>
                         <Input placeholder="Enter your last name" {...field} />
                       </FormControl>
-                      <FormMessage />
+                      <div className="h-5">
+                        <FormMessage />
+                      </div>
                     </FormItem>
                   )}
                 />
@@ -108,7 +107,9 @@ function RegisterForm() {
                     <FormControl>
                       <Input placeholder="Enter your email" type="email" {...field} />
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-5">
+                      <FormMessage />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -121,11 +122,13 @@ function RegisterForm() {
                     <FormControl>
                       <Input placeholder="Create a password" type="password" {...field} />
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-5">
+                      <FormMessage />
+                    </div>
                   </FormItem>
                 )}
               />
-              <Button type="submit" disabled={loading || success} className="w-full cursor-pointer">
+              <Button type="submit" disabled={loading} className="w-full cursor-pointer">
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -2,7 +2,7 @@ import z from "zod";
 
 export const ICalorieSchema = z.object({
   dish_name: z.string().min(2, 'Dish name must be at least 3 characters'),
-  servings: z.number().min(1, 'Must be at least 1 serving').max(20, 'Maximum 20 servings'),
+  servings: z.number().min(1, 'Must be at least 1 serving'),
 });
 
 export interface INutritionalInfo {

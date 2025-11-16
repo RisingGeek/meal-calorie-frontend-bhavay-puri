@@ -15,6 +15,7 @@ import { loginUserApi } from "@/lib/api";
 import { loginSchema } from "@/types/auth.type";
 import { useAuthStore } from "@/stores/authStore";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 function LoginForm() {
   const [loading, setLoading] = useState(false);
@@ -37,6 +38,7 @@ function LoginForm() {
     try {
       const response = await loginUserApi(values);
       setAuth(response.data.token);
+      toast.success('Login successful! Welcome back.');
       router.replace("/dashboard");
     } catch (err: any) {
       setError(err.response.data.error || 'Login failed. Please try again.');
