@@ -138,3 +138,7 @@ docker-compose down
 - Better UX (waits for user to stop typing)
 - Respects API rate limits
 
+## 🔗 Links
+
+- **Live Demo:** [https://meal-calorie-frontend-bhavay-puri.vercel.app/](https://meal-calorie-frontend-bhavay-puri.vercel.app/)
+---

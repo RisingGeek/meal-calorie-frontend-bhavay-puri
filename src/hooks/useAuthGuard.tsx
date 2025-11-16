@@ -49,14 +49,14 @@ export default function useAuthGuard() {
 
     // No token - redirect to login
     if (!token) {
-      router.push('/login');
+      router.push('/');
       return;
     }
 
     // Token expired - logout and redirect
     if (isTokenExpired(token)) {
       logout();
-      router.push('/login');
+      router.push('/');
       return;
     }
   }, [token, router, logout, isHydrated]);
