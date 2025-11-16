@@ -21,11 +21,13 @@
 - Weekly average calculations
 - Total searches statistics
 - Real-time goal tracking with progress bars
+
 **(Note: Dashboard includes only dummy components due to time constraint)**
 
 ### 🍽️ **Meal Planning**
 - Create multiple meal plans
 - Weekly schedule (7 days)
+
 **(Note: Adding a meal in plans is omitted because of time constraint)**
 
 ### 🎨 **UI/UX**
@@ -50,7 +52,7 @@
 - JWT token management
 
 ### **Development Tools**
-- ESLint + Prettier
+- ESLint
 - Docker + Docker Compose
 - npm package manager
 
