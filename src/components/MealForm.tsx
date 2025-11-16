@@ -133,7 +133,7 @@ export default function MealForm() {
                         
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-full p-0" align="start">
+                    <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
                       <CommandInput
                           placeholder="Type to search..."
                           value={searchQuery}
@@ -156,7 +156,7 @@ export default function MealForm() {
                               Type at least 2 characters to search
                             </CommandEmpty>
                           ) : suggestions.length === 0 ? (
-                            <CommandEmpty>
+                            <CommandEmpty className="p-2">
                               No dishes found. Try a different search term.
                             </CommandEmpty>
                           ) : (

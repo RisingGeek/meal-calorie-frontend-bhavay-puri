@@ -53,6 +53,11 @@ import { useAuthStore } from '@/stores/authStore';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+// export const metadata: Metadata = {
+//   title: 'Meal Plans - Plan Your Weekly Meals',
+//   description: 'Create and manage weekly meal plans with CalScope. Organize your meals, set calorie goals, and track your nutrition throughout the week.',
+// };
+
 // Types
 interface Meal {
   id: string;
@@ -168,12 +173,6 @@ export default function MealPlansPage() {
               Create and manage your weekly meal plans
             </p>
           </div>
-          <CreatePlanDialog
-            onCreatePlan={(plan) => {
-              addPlan(plan);
-              setSelectedPlan(plan);
-            }}
-          />
         </div>
 
         {plans.length === 0 ? (

@@ -48,7 +48,7 @@ function RegisterForm() {
 
   return (
     <div className="flex justify-center items-center">
-      <Card className="absolute top-1/2 -translate-y-1/2">
+      <Card className="absolute top-1/2 -translate-y-1/2 m-4">
         <CardHeader>
           <CardTitle className="text-3xl text-center">Create Account</CardTitle>
           <CardDescription className="text-base text-center text-muted-foreground">Sign up to start tracking your calories</CardDescription>

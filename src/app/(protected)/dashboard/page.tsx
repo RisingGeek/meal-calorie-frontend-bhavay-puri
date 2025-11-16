@@ -21,6 +21,12 @@ import {
 import { useAuthStore } from '@/stores/authStore';
 import { useMealStore } from '@/stores/mealStore';
 import Link from 'next/link';
+import { Metadata } from 'next';
+
+// export const metadata: Metadata = {
+//   title: 'Dashboard - Your Calorie Tracking Overview',
+//   description: 'View your calorie tracking statistics, daily progress, and nutrition insights on your CalScope dashboard. Track your health goals in one place.',
+// };
 
 export default function DashboardPage() {
   const router = useRouter();

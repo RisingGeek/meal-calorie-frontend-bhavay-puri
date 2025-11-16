@@ -3,6 +3,13 @@ import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/ca
 import { Utensils, TrendingUp, Search, Shield, Zap, Clock, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import FeatureCard from '@/components/FeatureCard';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'CalScope - Smart Calorie Tracker & Meal Planner',
+  description: 'Track your calories and plan your meals with CalScope. Get instant nutritional information from USDA FoodData Central for thousands of foods. Start your health journey today.',
+  keywords: ['calorie tracker', 'meal planner', 'nutrition app', 'food calorie calculator', 'diet tracker', 'weight loss app', 'healthy eating', 'calorie counter app'],
+};
 
 const HomePage = () => {
 

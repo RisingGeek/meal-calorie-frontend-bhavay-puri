@@ -34,7 +34,7 @@ export default function RootLayout({
           defaultTheme="dark"
           disableTransitionOnChange
         >
-          <div className="min-h-screen bg-gradient-to-br from-[#0A1229] via-[#132D64] to-[#471B78] text-primary">
+          <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900 text-primary">
 
             <Navbar />
             {children}

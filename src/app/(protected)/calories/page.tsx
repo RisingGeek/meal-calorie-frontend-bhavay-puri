@@ -4,18 +4,24 @@ import ResultCard from "@/components/ResultCard";
 import { Search } from "lucide-react";
 import CalorieHistory from "@/components/CalorieHistory";
 import CalorieHistoryHeader from "@/components/CalorieHistoryHeader";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Track Calories - Find Nutritional Information',
+  description: 'Search and track calories for thousands of foods. Get instant nutritional information for any dish or ingredient.',
+};
 
 function CaloriePage() {
 
   return (
-    <div className="max-w-300 mx-auto mt-10">
+    <div className="max-w-300 mx-4 md:mx-auto mt-10 pb-10">
       <h1 className="text-3xl text-center font-semibold">Calorie Tracker</h1>
       <h2 className="text-xl text-center">Get Precise Calorie counts for any dish</h2>
 
       <div className="flex flex-col lg:flex-row gap-6 mt-8">
         {/* Calorie Lookup */}
         <div className="flex flex-col flex-1 order-1 lg:order-1 gap-6">
-          <Card className="order-1 lg:order-none">
+          <Card className="order-1 lg:order-none border-2">
             <CardHeader>
               <CardTitle className="text-2xl flex items-center gap-2">
                 <Search />
@@ -30,7 +36,7 @@ function CaloriePage() {
             </CardContent>
           </Card>
           {/* History Sidebar */}
-          <Card className="h-full">
+          <Card className="h-full border-2">
             <CardHeader>
               <CalorieHistoryHeader />
             </CardHeader>
